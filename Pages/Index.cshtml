@@ -83,7 +83,7 @@
     <script>
         async function fetchCustomers() {
             try {
-                const response = await fetch('https://localhost:7290/api/CMSAPI');
+                const response = await fetch('https://cmsapi.runasp.net/api/CMSAPI');
                 const customers = await response.json();
                 const customerTableBody = document.getElementById('customerTableBody');
                 customerTableBody.innerHTML = '';                
@@ -118,7 +118,7 @@
         async function deleteCustomer(id) {
             alertify.confirm("Confirmation", "Are you sure you want to delete this customer?", async () => {
                 try {
-                    const response = await fetch(`https://localhost:7290/api/CMSAPI/${id}`, { method: 'DELETE' });
+                    const response = await fetch(`https://cmsapi.runasp.net/api/CMSAPI/${id}`, { method: 'DELETE' });
                     if (response.ok) {
                         fetchCustomers(); 
                     } else {                        
@@ -139,7 +139,7 @@
                 e.preventDefault();
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData);
-                const response = await fetch('https://localhost:7290/api/CMSAPI/add', {
+                const response = await fetch('https://cmsapi.runasp.net/api/CMSAPI/add', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -168,7 +168,7 @@
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
-            const response = await fetch('https://localhost:7290/api/CMSAPI/update', {
+            const response = await fetch('https://cmsapi.runasp.net/api/CMSAPI/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
