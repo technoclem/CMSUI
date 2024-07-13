@@ -1,0 +1,7 @@
+C:\Users\omola\source\repos\CustomerManagementUI\obj\Release\net8.0\PubTmp\Out\CustomerManagementUI.exe
+C:\Users\omola\source\repos\CustomerManagementUI\obj\Release\net8.0\PubTmp\Out\appsettings.Development.json
+C:\Users\omola\source\repos\CustomerManagementUI\obj\Release\net8.0\PubTmp\Out\appsettings.json
+C:\Users\omola\source\repos\CustomerManagementUI\obj\Release\net8.0\PubTmp\Out\CustomerManagementUI.dll
+C:\Users\omola\source\repos\CustomerManagementUI\obj\Release\net8.0\PubTmp\Out\CustomerManagementUI.deps.json
+C:\Users\omola\source\repos\CustomerManagementUI\obj\Release\net8.0\PubTmp\Out\CustomerManagementUI.runtimeconfig.json
+C:\Users\omola\source\repos\CustomerManagementUI\obj\Release\net8.0\PubTmp\Out\CustomerManagementUI.pdb
