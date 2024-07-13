@@ -1,0 +1,197 @@
+﻿@page
+@model IndexModel
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Customer Management System</h2>
+
+    <div class="row mb-3">
+        <div class="col-12 text-right">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">Add Customer</button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="customerTableBody">
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerModalLabel">Add Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCustomerForm">
+                    <div class="form-group mb-2">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="custName" name="custName" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>                    
+                    <button type="submit" class="btn btn-primary">Add Customer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Customer Modal -->
+<div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCustomerModalLabel">Edit Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCustomerForm">
+                    <input type="hidden" id="editCustomerId" name="id">
+                    <div class="form-group mb-2">
+                        <label for="editName">Name</label>
+                        <input type="text" class="form-control" id="editName" name="custName" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="editEmail">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="email" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Update Customer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function fetchCustomers() {
+            try {
+                const response = await fetch('https://localhost:7290/api/CMSAPI');
+                const customers = await response.json();
+                const customerTableBody = document.getElementById('customerTableBody');
+                customerTableBody.innerHTML = '';                
+                customers.forEach(customer => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${customer.id}</td>
+                            <td>${customer.custName}</td>
+                            <td>${customer.email}</td>                            
+                            <td>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCustomerModal" onclick="editCustomer(${customer.id}, '${customer.custName}', '${customer.email}')">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${customer.id})">Delete</button>
+                            </td>
+                        `;
+
+                    customerTableBody.appendChild(row);
+                });
+            }
+            catch (error) {
+                console.log('Error:', error);
+                alertify.defaults.transition = "slide";
+                alertify.alert('Failed to fetch customers.');
+            }
+        }
+
+        function editCustomer(id, custName, email) {
+            document.getElementById('editCustomerId').value = id;
+            document.getElementById('editName').value = custName;
+            document.getElementById('editEmail').value = email;            
+        }
+
+        async function deleteCustomer(id) {
+            alertify.confirm("Confirmation", "Are you sure you want to delete this customer?", async () => {
+                try {
+                    const response = await fetch(`https://localhost:7290/api/CMSAPI/${id}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        fetchCustomers(); 
+                    } else {                        
+                        alertify.alert('Failed to delete customer');
+                    }
+                } catch (error) {
+                    console.log('Error deleting customer:', error);
+                    alertify.alert('Failed to delete customer');
+                }
+            }, () => {
+                // Optional function if user cancels the action               
+            });
+        }
+
+        document.getElementById('addCustomerForm').addEventListener('submit', async (e) => {
+            try {
+               
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData);
+                const response = await fetch('https://localhost:7290/api/CMSAPI/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) {
+                    const r = await response.json();
+                    if (r == 1) {
+                        fetchCustomers();
+                        $('#addCustomerModal').modal('hide');
+                    }
+                    else if (r==0) {
+                        alertify.alert('The email exist in the database.');
+                    }
+                    else {
+                        alertify.alert('Failed to add customer on the server. Try Again');
+                    }
+                   
+                } else {
+                    alertify.alert("Failed to add customer.");
+                }
+            }
+            catch (error) { console.log(error); }
+        });
+
+        document.getElementById('editCustomerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            const response = await fetch('https://localhost:7290/api/CMSAPI/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                const r = await response.json();
+                if (r == 1) {
+                    fetchCustomers();
+                    $('#editCustomerModal').modal('hide');
+                }
+                else if (r == 0) {
+                    alertify.alert('The email exist for another customer in the database.');
+                }
+                else {
+                    alertify.alert('Failed to update customer on the server. Try Again');
+                }
+            } else {
+                alertify.alert("Failed to update customer.");
+            }
+        });
+
+        // Fetch customers on page load
+        fetchCustomers();
+    </script>
+}
