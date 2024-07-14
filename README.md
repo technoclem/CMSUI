@@ -37,6 +37,6 @@ To run the project locally, follow these steps:
 - The UI will be accessible at https://localhost:5001 (or another port if configured differently).
 
 ## Usage
-- The main page allows you to view, add, edit, and delete customers. It fetches customer data from the API and displays it in a table. You can use the provided buttons to add new customers or edit and delete existing ones.
+The main page allows you to view, add, edit, and delete customers. It fetches customer data from the API and displays it in a table. You can use the provided buttons to add new customers or edit and delete existing ones.
 
   
